@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.hziee.blog.dao.BrowseMapper">
+  <resultMap id="BaseResultMap" type="cn.edu.hziee.blog.model.Browse">
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="articleName" jdbcType="VARCHAR" property="articlename" />
+    <result column="browseNum" jdbcType="INTEGER" property="browsenum" />
+    <result column="browseTime" jdbcType="TIMESTAMP" property="browsetime" />
+  </resultMap>
+
+  <insert id="insert" parameterType="cn.edu.hziee.blog.model.Browse">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into browse (articleName, browseNum, browseTime
+      )
+    values (#{articlename,jdbcType=VARCHAR}, #{browsenum,jdbcType=INTEGER}, #{browsetime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.edu.hziee.blog.model.Browse">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into browse
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="articlename != null">
+        articleName,
+      </if>
+      <if test="browsenum != null">
+        browseNum,
+      </if>
+      <if test="browsetime != null">
+        browseTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="articlename != null">
+        #{articlename,jdbcType=VARCHAR},
+      </if>
+      <if test="browsenum != null">
+        #{browsenum,jdbcType=INTEGER},
+      </if>
+      <if test="browsetime != null">
+        #{browsetime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+<!--  <resultMap id="BaseResultMap" type="cn.edu.hziee.blog.model.Browse">-->
+<!--    <id column="id" jdbcType="INTEGER" property="id" />-->
+<!--    <result column="articleName" jdbcType="VARCHAR" property="articlename" />-->
+<!--    <result column="browseNum" jdbcType="INTEGER" property="browsenum" />-->
+<!--    <result column="browseTime" jdbcType="TIMESTAMP" property="browsetime" />-->
+<!--  </resultMap>-->
+<!--  <sql id="Base_Column_List">-->
+<!--    id, articleName, browseNum, browseTime-->
+<!--  </sql>-->
+<!--  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">-->
+<!--    select -->
+<!--    <include refid="Base_Column_List" />-->
+<!--    from browse-->
+<!--    where id = #{id,jdbcType=INTEGER}-->
+<!--  </select>-->
+<!--  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">-->
+<!--    delete from browse-->
+<!--    where id = #{id,jdbcType=INTEGER}-->
+<!--  </delete>-->
+<!--  <insert id="insert" parameterType="cn.edu.hziee.blog.model.Browse">-->
+<!--    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">-->
+<!--      SELECT LAST_INSERT_ID()-->
+<!--    </selectKey>-->
+<!--    insert into browse (articleName, browseNum, browseTime-->
+<!--      )-->
+<!--    values (#{articlename,jdbcType=VARCHAR}, #{browsenum,jdbcType=INTEGER}, #{browsetime,jdbcType=TIMESTAMP}-->
+<!--      )-->
+<!--  </insert>-->
+<!--  <insert id="insertSelective" parameterType="cn.edu.hziee.blog.model.Browse">-->
+<!--    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">-->
+<!--      SELECT LAST_INSERT_ID()-->
+<!--    </selectKey>-->
+<!--    insert into browse-->
+<!--    <trim prefix="(" suffix=")" suffixOverrides=",">-->
+<!--      <if test="articlename != null">-->
+<!--        articleName,-->
+<!--      </if>-->
+<!--      <if test="browsenum != null">-->
+<!--        browseNum,-->
+<!--      </if>-->
+<!--      <if test="browsetime != null">-->
+<!--        browseTime,-->
+<!--      </if>-->
+<!--    </trim>-->
+<!--    <trim prefix="values (" suffix=")" suffixOverrides=",">-->
+<!--      <if test="articlename != null">-->
+<!--        #{articlename,jdbcType=VARCHAR},-->
+<!--      </if>-->
+<!--      <if test="browsenum != null">-->
+<!--        #{browsenum,jdbcType=INTEGER},-->
+<!--      </if>-->
+<!--      <if test="browsetime != null">-->
+<!--        #{browsetime,jdbcType=TIMESTAMP},-->
+<!--      </if>-->
+<!--    </trim>-->
+<!--  </insert>-->
+<!--  <update id="updateByPrimaryKeySelective" parameterType="cn.edu.hziee.blog.model.Browse">-->
+<!--    update browse-->
+<!--    <set>-->
+<!--      <if test="articlename != null">-->
+<!--        articleName = #{articlename,jdbcType=VARCHAR},-->
+<!--      </if>-->
+<!--      <if test="browsenum != null">-->
+<!--        browseNum = #{browsenum,jdbcType=INTEGER},-->
+<!--      </if>-->
+<!--      <if test="browsetime != null">-->
+<!--        browseTime = #{browsetime,jdbcType=TIMESTAMP},-->
+<!--      </if>-->
+<!--    </set>-->
+<!--    where id = #{id,jdbcType=INTEGER}-->
+<!--  </update>-->
+<!--  <update id="updateByPrimaryKey" parameterType="cn.edu.hziee.blog.model.Browse">-->
+<!--    update browse-->
+<!--    set articleName = #{articlename,jdbcType=VARCHAR},-->
+<!--      browseNum = #{browsenum,jdbcType=INTEGER},-->
+<!--      browseTime = #{browsetime,jdbcType=TIMESTAMP}-->
+<!--    where id = #{id,jdbcType=INTEGER}-->
+<!--  </update>-->
+</mapper>
