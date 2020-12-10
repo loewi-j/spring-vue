@@ -36,7 +36,7 @@ public class User implements Serializable {
     /**
      * 生日
      */
-    private Date birthday;
+    private String  birthday;
 
     /**
      * 个人简介
@@ -51,7 +51,7 @@ public class User implements Serializable {
     /**
      * 最后登录时间
      */
-    private Date recentlylanded;
+    private String recentlylanded;
 
     /**
      * 头像地址
@@ -100,11 +100,11 @@ public class User implements Serializable {
         this.gender = gender;
     }
 
-    public Date getBirthday() {
+    public String getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(Date birthday) {
+    public void setBirthday(String birthday) {
         this.birthday = birthday;
     }
 
@@ -124,11 +124,11 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    public Date getRecentlylanded() {
+    public String getRecentlylanded() {
         return recentlylanded;
     }
 
-    public void setRecentlylanded(Date recentlylanded) {
+    public void setRecentlylanded(String recentlylanded) {
         this.recentlylanded = recentlylanded;
     }
 

@@ -29,20 +29,28 @@ public class ArticleService {
         return articleMapper.selectNextArticle(id);
     }
 
-    //增加博客（全部）
-    public int insertArticle(Article article) {
-        if (articleMapper.insert(article) > 0) {
-            return 1;
-        }
-        return 0;
+    //按分类查询博客（全部）
+    public List<Article> selectArticleListByArticleCategories(String category) {
+
+        return articleMapper.selectArticleListByArticleCategories(category);
     }
 
-    //增加博客（选择 但标题不得为空）
+    //按分类查找最后一个博客
+    public Article selectArticleLastByCategories(String category) {
+        return articleMapper.selectArticleLastByCategories(category);
+    }
+
+    //增加博客（选择 但标题不得为空 同时为上一个博客添加指向）
     public int insertArticleSelective(Article article) {
         if (article.getArticletitle() == null)
             return 0;
+        //查找上一个博客
+        Article last = this.selectArticleLastByCategories(article.getArticlecategories());
+        article.setLastarticleid(last.getId());
 
         if (articleMapper.insertSelective(article) > 0) {
+            last.setNextarticleid(article.getId());
+            articleMapper.updateByPrimaryKeySelective(last);
             return 1;
         }
         return 0;

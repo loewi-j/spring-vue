@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.edu.hziee.blog.dao.VisitorMapper">
   <resultMap id="BaseResultMap" type="cn.edu.hziee.blog.model.Visitor">
-    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="userId" jdbcType="INTEGER" property="id" />
     <result column="visitorName" jdbcType="VARCHAR" property="visitorname" />
     <result column="visitorIP" jdbcType="VARCHAR" property="visitorip" />
     <result column="visitorAddress" jdbcType="VARCHAR" property="visitoraddress" />
@@ -10,6 +10,95 @@
     <result column="visitorOS" jdbcType="VARCHAR" property="visitoros" />
     <result column="visitTime" jdbcType="TIMESTAMP" property="visittime" />
   </resultMap>
+
+<!--  <select id="selectVisitByIp" parameterType="java.lang.String"-->
+<!--          resultMap="BaseResultMap">-->
+<!--    select-->
+<!--    <include refid="Base_Column_List" />-->
+<!--    from visitor-->
+<!--    where visitorIP = #{visitorIP,jdbcType=VARCHAR}-->
+<!--  </select>-->
+  <sql id="Base_Column_List">
+		userId,visitorName, visitorIP, visitorAddress, visitorBrowser,visitorOS,visitTime
+	</sql>
+
+  <select id="selectVisitListByIp" resultType="map">
+		SELECT
+		COUNT(*) AS count
+		FROM
+		visitor
+		GROUP BY visitorIP,userId
+		ORDER BY count desc
+	</select>
+
+  <select id="selectLikeVisitListGroupByIp" parameterType="Map"
+          resultType="map">
+    select
+    userId,visitorIP,visitorAddress ,visitorBrowser ,visitorOS,
+    COUNT(*) AS count
+    from visitor
+    <where>
+      <if test="visitorIP!=null and visitorIP!=''">
+        and (visitorIP like CONCAT(CONCAT('%', #{visitorIP}), '%')
+        or visitorAddress like CONCAT(CONCAT('%', #{visitorAddress}), '%')
+        or visitorBrowser like CONCAT(CONCAT('%', #{visitorBrowser}), '%')
+        or visitorOS like CONCAT(CONCAT('%', #{visitorOS}), '%'))
+      </if>
+      <if test="visitTime!=null and visitTime!=''">
+        and DATE_FORMAT(visitTime,'%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    GROUP BY visitorIP,userId
+    ORDER BY count desc
+  </select>
+
+  <select id="selectLikeVisitListByPage" parameterType="Map"
+          resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from visitor
+    <where>
+      <if test="visitorIP!=null and visitorIP!=''">
+        and (visitorIP like CONCAT(CONCAT('%', #{visitorIP}), '%')
+        or visitorAddress likeCONCAT(CONCAT('%', #{visitorAddress}), '%')
+        or visitorBrowser like CONCAT(CONCAT('%', #{visitorBrowser}), '%')
+        or visitorOS like CONCAT(CONCAT('%', #{visitorOS}), '%'))
+      </if>
+      <if test="visitTime!=null and visitTime!=''">
+        and DATE_FORMAT(visitTime,'%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    ORDER BY visitTime DESC
+  </select>
+
+  <select id="selectVisitListByDate" resultType="map"
+          parameterType="Map">
+    SELECT visitTime,
+    COUNT(*) AS count
+    FROM
+    visitor
+    <where>
+      <if test="startTime!=null and startTime!='' and format=='day'">
+        and DATE_FORMAT(visitTime,'%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="startTime!=null and startTime!='' and format=='month'">
+        and DATE_FORMAT(visitTime,'%Y-%m') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="startTime!=null and startTime!='' and format=='year'">
+        and DATE_FORMAT(visitTime,'%Y') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    <if test="format=='day'">
+      GROUP BY DATE_FORMAT(visitTime,'%Y-%m-%d')
+    </if>
+    <if test="format=='month'">
+      GROUP BY DATE_FORMAT(visitTime,'%Y-%m')
+    </if>
+    <if test="format=='year'">
+      GROUP BY DATE_FORMAT(visitTime,'%Y')
+    </if>
+  </select>
+
   <insert id="insert" parameterType="cn.edu.hziee.blog.model.Visitor">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
@@ -22,11 +111,14 @@
       )
   </insert>
   <insert id="insertSelective" parameterType="cn.edu.hziee.blog.model.Visitor">
-    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
+<!--    <selectKey keyProperty="userId" order="AFTER" resultType="java.lang.Integer">-->
+<!--      SELECT LAST_INSERT_ID()-->
+<!--    </selectKey>-->
     insert into visitor
     <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        userId,
+      </if>
       <if test="visitorname != null">
         visitorName,
       </if>
@@ -47,6 +139,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
       <if test="visitorname != null">
         #{visitorname,jdbcType=VARCHAR},
       </if>
@@ -67,117 +162,5 @@
       </if>
     </trim>
   </insert>
-<!--  <resultMap id="BaseResultMap" type="cn.edu.hziee.blog.model.Visitor">-->
-<!--    <id column="id" jdbcType="INTEGER" property="id" />-->
-<!--    <result column="visitorName" jdbcType="VARCHAR" property="visitorname" />-->
-<!--    <result column="visitorIP" jdbcType="VARCHAR" property="visitorip" />-->
-<!--    <result column="visitorAddress" jdbcType="VARCHAR" property="visitoraddress" />-->
-<!--    <result column="visitorBrowser" jdbcType="VARCHAR" property="visitorbrowser" />-->
-<!--    <result column="visitorOS" jdbcType="VARCHAR" property="visitoros" />-->
-<!--    <result column="visitTime" jdbcType="TIMESTAMP" property="visittime" />-->
-<!--  </resultMap>-->
-<!--  <sql id="Base_Column_List">-->
-<!--    id, visitorName, visitorIP, visitorAddress, visitorBrowser, visitorOS, visitTime-->
-<!--  </sql>-->
-<!--  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">-->
-<!--    select -->
-<!--    <include refid="Base_Column_List" />-->
-<!--    from visitor-->
-<!--    where id = #{id,jdbcType=INTEGER}-->
-<!--  </select>-->
-<!--  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">-->
-<!--    delete from visitor-->
-<!--    where id = #{id,jdbcType=INTEGER}-->
-<!--  </delete>-->
-<!--  <insert id="insert" parameterType="cn.edu.hziee.blog.model.Visitor">-->
-<!--    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">-->
-<!--      SELECT LAST_INSERT_ID()-->
-<!--    </selectKey>-->
-<!--    insert into visitor (visitorName, visitorIP, visitorAddress, -->
-<!--      visitorBrowser, visitorOS, visitTime-->
-<!--      )-->
-<!--    values (#{visitorname,jdbcType=VARCHAR}, #{visitorip,jdbcType=VARCHAR}, #{visitoraddress,jdbcType=VARCHAR}, -->
-<!--      #{visitorbrowser,jdbcType=VARCHAR}, #{visitoros,jdbcType=VARCHAR}, #{visittime,jdbcType=TIMESTAMP}-->
-<!--      )-->
-<!--  </insert>-->
-<!--  <insert id="insertSelective" parameterType="cn.edu.hziee.blog.model.Visitor">-->
-<!--    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">-->
-<!--      SELECT LAST_INSERT_ID()-->
-<!--    </selectKey>-->
-<!--    insert into visitor-->
-<!--    <trim prefix="(" suffix=")" suffixOverrides=",">-->
-<!--      <if test="visitorname != null">-->
-<!--        visitorName,-->
-<!--      </if>-->
-<!--      <if test="visitorip != null">-->
-<!--        visitorIP,-->
-<!--      </if>-->
-<!--      <if test="visitoraddress != null">-->
-<!--        visitorAddress,-->
-<!--      </if>-->
-<!--      <if test="visitorbrowser != null">-->
-<!--        visitorBrowser,-->
-<!--      </if>-->
-<!--      <if test="visitoros != null">-->
-<!--        visitorOS,-->
-<!--      </if>-->
-<!--      <if test="visittime != null">-->
-<!--        visitTime,-->
-<!--      </if>-->
-<!--    </trim>-->
-<!--    <trim prefix="values (" suffix=")" suffixOverrides=",">-->
-<!--      <if test="visitorname != null">-->
-<!--        #{visitorname,jdbcType=VARCHAR},-->
-<!--      </if>-->
-<!--      <if test="visitorip != null">-->
-<!--        #{visitorip,jdbcType=VARCHAR},-->
-<!--      </if>-->
-<!--      <if test="visitoraddress != null">-->
-<!--        #{visitoraddress,jdbcType=VARCHAR},-->
-<!--      </if>-->
-<!--      <if test="visitorbrowser != null">-->
-<!--        #{visitorbrowser,jdbcType=VARCHAR},-->
-<!--      </if>-->
-<!--      <if test="visitoros != null">-->
-<!--        #{visitoros,jdbcType=VARCHAR},-->
-<!--      </if>-->
-<!--      <if test="visittime != null">-->
-<!--        #{visittime,jdbcType=TIMESTAMP},-->
-<!--      </if>-->
-<!--    </trim>-->
-<!--  </insert>-->
-<!--  <update id="updateByPrimaryKeySelective" parameterType="cn.edu.hziee.blog.model.Visitor">-->
-<!--    update visitor-->
-<!--    <set>-->
-<!--      <if test="visitorname != null">-->
-<!--        visitorName = #{visitorname,jdbcType=VARCHAR},-->
-<!--      </if>-->
-<!--      <if test="visitorip != null">-->
-<!--        visitorIP = #{visitorip,jdbcType=VARCHAR},-->
-<!--      </if>-->
-<!--      <if test="visitoraddress != null">-->
-<!--        visitorAddress = #{visitoraddress,jdbcType=VARCHAR},-->
-<!--      </if>-->
-<!--      <if test="visitorbrowser != null">-->
-<!--        visitorBrowser = #{visitorbrowser,jdbcType=VARCHAR},-->
-<!--      </if>-->
-<!--      <if test="visitoros != null">-->
-<!--        visitorOS = #{visitoros,jdbcType=VARCHAR},-->
-<!--      </if>-->
-<!--      <if test="visittime != null">-->
-<!--        visitTime = #{visittime,jdbcType=TIMESTAMP},-->
-<!--      </if>-->
-<!--    </set>-->
-<!--    where id = #{id,jdbcType=INTEGER}-->
-<!--  </update>-->
-<!--  <update id="updateByPrimaryKey" parameterType="cn.edu.hziee.blog.model.Visitor">-->
-<!--    update visitor-->
-<!--    set visitorName = #{visitorname,jdbcType=VARCHAR},-->
-<!--      visitorIP = #{visitorip,jdbcType=VARCHAR},-->
-<!--      visitorAddress = #{visitoraddress,jdbcType=VARCHAR},-->
-<!--      visitorBrowser = #{visitorbrowser,jdbcType=VARCHAR},-->
-<!--      visitorOS = #{visitoros,jdbcType=VARCHAR},-->
-<!--      visitTime = #{visittime,jdbcType=TIMESTAMP}-->
-<!--    where id = #{id,jdbcType=INTEGER}-->
-<!--  </update>-->
+
 </mapper>

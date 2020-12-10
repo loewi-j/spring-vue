@@ -35,6 +35,8 @@ public interface ArticleMapper {
      *  为上一条博客添加指向
      * */
 
+    //安分类查找最后一条博客
+    Article selectArticleLastByCategories(String categories);
 
     /**
      *  获取博客信息，根据日期月份分组查询
@@ -43,6 +45,9 @@ public interface ArticleMapper {
 
     //获取博客信息，根据状态分组查询
     List<?>  selectArticleListByArticleState();
+
+    //获取博客信息，根据类别分组查询
+    List<Article>  selectArticleListByArticleCategories(String category);
 
 //    List<?> selectArticleByClick();
 
@@ -54,7 +59,6 @@ public interface ArticleMapper {
     /**
      * 模糊分页查询博客
      */
-
     List<Article> selectLikeArticleListByPage(Map<String, Object> map);
 
     /**

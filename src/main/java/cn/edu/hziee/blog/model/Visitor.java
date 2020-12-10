@@ -8,7 +8,7 @@ import java.util.Date;
  * @author 
  */
 public class Visitor implements Serializable {
-    private Integer id;
+    private Integer userId;
 
     /**
      * 访客名字
@@ -38,16 +38,16 @@ public class Visitor implements Serializable {
     /**
      * 访问时间
      */
-    private Date visittime;
+    private String visittime;
 
     private static final long serialVersionUID = 1L;
 
-    public Integer getId() {
-        return id;
+    public Integer getUserid() {
+        return userId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setUserid(Integer id) {
+        this.userId = id;
     }
 
     public String getVisitorname() {
@@ -90,11 +90,11 @@ public class Visitor implements Serializable {
         this.visitoros = visitoros;
     }
 
-    public Date getVisittime() {
+    public String getVisittime() {
         return visittime;
     }
 
-    public void setVisittime(Date visittime) {
+    public void setVisittime(String visittime) {
         this.visittime = visittime;
     }
 
@@ -110,7 +110,7 @@ public class Visitor implements Serializable {
             return false;
         }
         Visitor other = (Visitor) that;
-        return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
+        return (this.getUserid() == null ? other.getUserid() == null : this.getUserid().equals(other.getUserid()))
             && (this.getVisitorname() == null ? other.getVisitorname() == null : this.getVisitorname().equals(other.getVisitorname()))
             && (this.getVisitorip() == null ? other.getVisitorip() == null : this.getVisitorip().equals(other.getVisitorip()))
             && (this.getVisitoraddress() == null ? other.getVisitoraddress() == null : this.getVisitoraddress().equals(other.getVisitoraddress()))
@@ -123,7 +123,7 @@ public class Visitor implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
+        result = prime * result + ((getUserid() == null) ? 0 : getUserid().hashCode());
         result = prime * result + ((getVisitorname() == null) ? 0 : getVisitorname().hashCode());
         result = prime * result + ((getVisitorip() == null) ? 0 : getVisitorip().hashCode());
         result = prime * result + ((getVisitoraddress() == null) ? 0 : getVisitoraddress().hashCode());
@@ -139,7 +139,7 @@ public class Visitor implements Serializable {
         sb.append(getClass().getSimpleName());
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
-        sb.append(", id=").append(id);
+        sb.append(", id=").append(userId);
         sb.append(", visitorname=").append(visitorname);
         sb.append(", visitorip=").append(visitorip);
         sb.append(", visitoraddress=").append(visitoraddress);

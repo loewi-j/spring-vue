@@ -4,16 +4,15 @@ import cn.edu.hziee.blog.model.Article;
 import cn.edu.hziee.blog.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("article")
+@CrossOrigin
 public class ArticleController {
 
     @Autowired
@@ -50,7 +49,6 @@ public class ArticleController {
             map.put("status", 500);
         }
         map.put("data", article);
-
         return map;
     }
 
@@ -70,6 +68,21 @@ public class ArticleController {
         return map;
     }
 
+    //分类查询
+    @RequestMapping(value = "categories", method = RequestMethod.GET)
+    public Map<String, Object> findArticleByCategories(String category){
+        Map<String, Object> map=new HashMap<String, Object>();
+        List<Article> articleMap = articleService.selectArticleListByArticleCategories(category);
+
+        if(articleMap!=null){
+            map.put("status", 200);
+        }else{
+            map.put("status", 500);
+        }
+        map.put("list", articleMap);
+        return map;
+    }
+
     //选择插入(标题不得为空)
     @RequestMapping(value = "", method = RequestMethod.POST)
     public Map<String, Object> addArticle(Article article){
@@ -81,7 +94,6 @@ public class ArticleController {
             // 0表示：插入失败
             map.put("status", 0);
         }
-
         return map;
     }
 
@@ -113,7 +125,6 @@ public class ArticleController {
             map.put("status", 0);
             map.put("msg", "删除失败");
         }
-
         return map;
     }
 

@@ -52,6 +52,22 @@
 		group by articleState
 	</select>
 
+  <select id="selectArticleListByArticleCategories" parameterType="String" resultMap="BaseResultMap">
+		select
+        <include refid="Base_Column_List" />
+		from
+		article
+        where articleCategories = #{articleCategories,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectArticleLastByCategories" parameterType="String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from article
+    where articleCategories = #{articleCategories,jdbcType=VARCHAR}
+    order by id DESC limit 1
+  </select>
+
   <select id="selectArticleListByPage" parameterType="Map"
           resultMap="BaseResultMap">
     select
@@ -165,9 +181,6 @@
       </if>
       <if test="articlestate != null">
         articleState,
-      </if>
-      <if test="click != null">
-        click,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
