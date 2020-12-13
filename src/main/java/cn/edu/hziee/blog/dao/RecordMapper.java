@@ -1,7 +1,11 @@
 package cn.edu.hziee.blog.dao;
 
 import cn.edu.hziee.blog.model.Record;
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
 
+@Mapper
+@Repository
 public interface RecordMapper {
     int deleteByPrimaryKey(Integer id);
 

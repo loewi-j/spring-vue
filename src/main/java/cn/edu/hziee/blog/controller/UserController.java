@@ -31,6 +31,7 @@ public class UserController {
     @Autowired
     private VisitorMapper visitorMapper;
     private Visitor visitor;
+    private User user;
 
     //增加
     @RequestMapping(value = "", method = RequestMethod.POST)
@@ -39,6 +40,7 @@ public class UserController {
         if (userService.insertSelective(user) != 0) {
             map.put("status", 200);
             map.put("msg", "添加成功");
+            map.put("username", user.getUsername());
         } else {
             // 0表示：插入失败
             map.put("status", 0);
@@ -77,7 +79,7 @@ public class UserController {
 
     //查找
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public Map<String, Object> getById(HttpServletResponse response, @PathVariable int id) {
+    public Map<String, Object> getById(@PathVariable int id) {
         Map<String, Object> map = new HashMap<String, Object>();
         User user = userService.selectByPrimaryKey(id);//从数据库找到id对应的对象
         if(user!=null){
@@ -124,7 +126,7 @@ public class UserController {
                                      String visitorIP, String visitorAddress, String visitorBrowser , String visitorOS) throws ParseException {
         Map<String, Object> map = new HashMap<String, Object>();
         visitor = new Visitor();
-        System.out.println(visitorIP + " " + visitorAddress);
+        System.out.println(username + " " + password);
 
         //保存数据至session
         if (session.getAttribute("username") != null) {
@@ -170,6 +172,43 @@ public class UserController {
             map.put("status", 0);
             map.put("msg", "验证失败");
         }
+
+        return map;
+    }
+
+    //注册
+    @RequestMapping("/register")
+    public Map<String, Object> register(String username, String password, HttpSession session,
+                                     String visitorIP, String visitorAddress, String visitorBrowser , String visitorOS) throws ParseException {
+        Map<String, Object> map = new HashMap<String, Object>();
+        visitor = new Visitor();
+        user = new User();
+        user.setUsername(username);
+        user.setPassword(password);
+        userService.insertSelective(user);
+
+        long now = System.currentTimeMillis();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String time = sdf.format(new Date());//当前时间
+
+        //当前时间  距离当天凌晨  秒数
+        long overTime = (now - (sdf.parse(sdf.format(now)).getTime()))/1000;
+
+        session.setMaxInactiveInterval((int)overTime);//以秒为单位
+        session.setAttribute("username", username);
+
+        visitor.setUserid(user.getId());
+        visitor.setVisitorname(user.getUsername());
+        visitor.setVisittime(time);
+        visitor.setVisitorip(visitorIP);
+        visitor.setVisitoraddress(visitorAddress);
+        visitor.setVisitorbrowser(visitorBrowser);
+        visitor.setVisitoros(visitorOS);
+        visitorMapper.insertSelective(visitor);//添加访问记录
+
+        map.put("status", 200);
+        map.put("msg", "注册成功");
+        map.put("username", session.getAttribute("username"));
 
         return map;
     }

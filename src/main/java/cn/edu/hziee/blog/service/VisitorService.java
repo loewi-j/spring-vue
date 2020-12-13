@@ -2,6 +2,8 @@ package cn.edu.hziee.blog.service;
 
 import cn.edu.hziee.blog.dao.VisitorMapper;
 import cn.edu.hziee.blog.model.Visitor;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,16 +33,24 @@ public class VisitorService {
     }
 
 
-    public List<Visitor> selectLikeVisitListByPage(Map<String, Object> map) {
-        return visitorMapper.selectLikeVisitListByPage(map);
+    public PageInfo selectLikeVisitListByPage(Map<String, Object> map) {
+        //分页显示
+        PageHelper.startPage((int)map.get("page"), (int)map.get("pageSize"));
+        List<Visitor> list = visitorMapper.selectLikeVisitListByPage(map);
+        PageInfo pageInfo = new PageInfo(list);
+        return pageInfo;
     }
 
     public List<?> selectVisitListByIp(Map<String, Object> map) {
         return visitorMapper.selectVisitListByIp(map);
     }
 
-    public List<?> selectLikeVisitListGroupByIp(Map<String, Object> map) {
-        return visitorMapper.selectLikeVisitListGroupByIp(map);
+    public PageInfo selectLikeVisitListGroupByIp(Map<String, Object> map) {
+        //分页显示
+        PageHelper.startPage((int)map.get("page"), (int)map.get("pageSize"));
+        List<?> list = visitorMapper.selectLikeVisitListGroupByIp(map);
+        PageInfo pageInfo = new PageInfo(list);
+        return pageInfo;
     }
 
 }

@@ -21,9 +21,9 @@ public class VisitorController {
 
     //按照不同时间查询访客的数量
     @RequestMapping(value = "/findVisitorsByDate", method = RequestMethod.GET)
-    public Map<String, Object> findVisitorsByDate(/*@RequestParam(value="format") */String format,
-                                                    /*@RequestParam(value="startTime") */String startTime,
-                                                    /*@RequestParam(value="endTime") */String endTime) throws Exception {
+    public Map<String, Object> findVisitorsByDate(@RequestParam(value="format") String format,
+                                                  @RequestParam(value="startTime") String startTime,
+                                                  @RequestParam(value="endTime") String endTime) throws Exception {
         Map<String, Object> map = new HashMap<String, Object>();
         //传入参数
         if (format != "" && format != null) {
@@ -45,13 +45,13 @@ public class VisitorController {
         return map;
     }
 
-    //模糊组合分页查询访客信息
+    //模糊组合分页查询访客信息(ip必填)
     @RequestMapping(value = "/findVisitorsByPage")
     public Map<String, Object> selectLikeVisitListByPage(Visitor visitor,
                                                          @RequestParam(value = "startTime") String startTime,
                                                          @RequestParam(value = "endTime") String endTime,
-                                                         @RequestParam(value = "page", required = true, defaultValue = "1") Integer page,
-                                                         @RequestParam(value = "pageSize", required = true, defaultValue = "8") Integer pageSize) throws Exception {
+                                                         @RequestParam(value = "page", defaultValue = "1") Integer page,
+                                                         @RequestParam(value = "pageSize", defaultValue = "8") Integer pageSize) throws Exception {
         Map<String, Object> map = new HashMap<String, Object>();
         if (startTime != "" && startTime != null) {
             map.put("startTime", startTime);
@@ -71,22 +71,20 @@ public class VisitorController {
         if (visitor.getVisitoros() != null && visitor.getVisitoros() != "") {
             map.put("visitorOS", visitor.getVisitoros());
         }
-        //分页显示
-        PageHelper.startPage(page, pageSize);
-        List<Visitor> visitList = visitorService.selectLikeVisitListByPage(map);
-        PageInfo<Visitor> pageInfo = new PageInfo<Visitor>(visitList);
+
+        map.put("page", page);
+        map.put("pageSize", pageSize);
+        PageInfo<Visitor> pageInfo = visitorService.selectLikeVisitListByPage(map);
 
         Map<String, Object> returnMap = new HashMap<String, Object>();
-        if (visitList.size() > 0) {
+        if (pageInfo != null) {
             returnMap.put("status", 200);
         } else {
             returnMap.put("status", 500);
         }
-        returnMap.put("visitList", visitList);
         returnMap.put("pageInfo", pageInfo);
         return returnMap;
     }
-
 
     //模糊组合分页查询访客信息
     @RequestMapping(value = "/findVisitorsGroupByIp")
@@ -115,18 +113,17 @@ public class VisitorController {
         if (visitor.getVisitoros() != null && visitor.getVisitoros() != "") {
             map.put("visitorOS", visitor.getVisitoros());
         }
-        //分页显示
-        PageHelper.startPage(page, pageSize);
-        List<?> visitList = visitorService.selectLikeVisitListGroupByIp(map);
-        PageInfo pageInfo = new PageInfo(visitList);
+
+        map.put("page", page);
+        map.put("pageSize", pageSize);
+        PageInfo<?> pageInfo = visitorService.selectLikeVisitListGroupByIp(map);
 
         Map<String, Object> returnMap = new HashMap<String, Object>();
-        if (visitList.size() > 0) {
+        if (pageInfo != null) {
             returnMap.put("status", 200);
         } else {
             returnMap.put("status", 500);
         }
-        returnMap.put("visitList", visitList);
         returnMap.put("pageInfo", pageInfo);
         return returnMap;
     }

@@ -31,30 +31,32 @@ public interface ArticleMapper {
     //获取下一篇一篇博客
     Article selectNextArticle(Integer id);
 
-    /**
-     *  为上一条博客添加指向
-     * */
-
     //安分类查找最后一条博客
     Article selectArticleLastByCategories(String categories);
+
+    //按不同条件组合 分页查询博客
+    List<Article> selectArticleListByPage(Map<String, Object> map);
+
+    //获取博客信息，根据类别分组查询
+    List<Article> selectArticleListByArticleCategories(String category);
+
+    //关键字分类查询
+    List<Article> selectArticleListByKeyAndCategories(Map<String, Object> map);
+
+    //根据状态和id查询
+    List<?> selectArticleCountByArticleStateAndId(Integer id);
 
     /**
      *  获取博客信息，根据日期月份分组查询
      */
 //    List<?> selectArticleListByDate(Map<String, Object> map);
 
-    //获取博客信息，根据状态分组查询
+    //根据状态分组查询 返回数量
     List<?>  selectArticleListByArticleState();
 
-    //获取博客信息，根据类别分组查询
-    List<Article>  selectArticleListByArticleCategories(String category);
 
 //    List<?> selectArticleByClick();
 
-    /**
-     * 按不同条件组合 分页查询博客
-     */
-    List<Article> selectArticleListByPage(Map<String, Object> map);
 
     /**
      * 模糊分页查询博客

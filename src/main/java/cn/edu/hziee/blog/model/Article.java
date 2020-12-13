@@ -18,7 +18,7 @@ public class Article implements Serializable {
     /**
      * 文章作者
      */
-    private String author;
+    private Integer author;
 
     /**
      * 文章名
@@ -92,11 +92,11 @@ public class Article implements Serializable {
         this.id = id;
     }
 
-    public String getAuthor() {
+    public Integer getAuthor() {
         return author;
     }
 
-    public void setAuthor(String author) {
+    public void setAuthor(Integer author) {
         this.author = author;
     }
 

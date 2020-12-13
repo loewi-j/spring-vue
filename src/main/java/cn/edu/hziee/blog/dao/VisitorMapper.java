@@ -20,7 +20,6 @@ public interface VisitorMapper {
     //模糊查询
     List<Visitor> selectLikeVisitListByPage(Map<String, Object> map);
 
-
     //模糊查询 分组显示
     List<?> selectLikeVisitListGroupByIp(Map<String, Object> map);
 

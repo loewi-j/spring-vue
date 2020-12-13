@@ -13,16 +13,16 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("article")
+@RequestMapping("admin")
 @CrossOrigin
-public class ArticleController {
+public class AdminController {
 
     @Autowired
     ArticleService articleService;
 
     //根据ID查询
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    @RecordLog(operateDesc = RecordUtil.ARTICLE_SELECT, userType=RecordUtil.USERTYPE_USER)
+    @RecordLog(operateDesc = RecordUtil.ARTICLE_SELECT, userType=RecordUtil.USERTYPE_ADMIN)
     public Map<String, Object> findArticleById(@PathVariable Integer id){
         Map<String, Object> map=new HashMap<String, Object>();
 
@@ -41,7 +41,7 @@ public class ArticleController {
 
     //查询前一个
     @RequestMapping(value = "prev", method = RequestMethod.GET)
-    @RecordLog(operateDesc = RecordUtil.ARTICLE_SELECT, userType=RecordUtil.USERTYPE_USER)
+    @RecordLog(operateDesc = RecordUtil.ARTICLE_SELECT, userType=RecordUtil.USERTYPE_ADMIN)
     public Map<String, Object> findPrevArticle(Integer id){
         Map<String, Object> map=new HashMap<String, Object>();
         Article article = articleService.selectPrevArticle(id);
@@ -58,7 +58,7 @@ public class ArticleController {
 
     //查询后一个
     @RequestMapping(value = "next", method = RequestMethod.GET)
-    @RecordLog(operateDesc = RecordUtil.ARTICLE_SELECT, userType=RecordUtil.USERTYPE_USER)
+    @RecordLog(operateDesc = RecordUtil.ARTICLE_SELECT, userType=RecordUtil.USERTYPE_ADMIN)
     public Map<String, Object> findNextArticle(Integer id){
         Map<String, Object> map=new HashMap<String, Object>();
         Article article = articleService.selectNextArticle(id);
@@ -95,7 +95,7 @@ public class ArticleController {
 
     //关键字查询
     @RequestMapping(value = "key", method = RequestMethod.GET)
-    @RecordLog(operateDesc = RecordUtil.ARTICLE_FIND, userType=RecordUtil.USERTYPE_USER)
+    @RecordLog(operateDesc = RecordUtil.ARTICLE_FIND, userType=RecordUtil.USERTYPE_ADMIN)
     public Map<String, Object> findArticleByKeyAndCategories(@RequestParam(value = "key", defaultValue = "") String key,
                                                              @RequestParam(value = "category", defaultValue = "") String category,
                                                              @RequestParam(value = "page", defaultValue = "1") int page,
@@ -121,7 +121,7 @@ public class ArticleController {
     public Map<String, Object> findArticleByStateAndId(@RequestParam(value = "id", defaultValue = "") Integer id){
         Map<String, Object> map=new HashMap<String, Object>();
 
-        List<?> list = articleService.selectArticleListByArticleStateAndId(id);
+        List<?> list = articleService.selectArticleListByArticleState();
 
         if(list!=null){
             map.put("status", 200);
@@ -134,6 +134,7 @@ public class ArticleController {
 
     //选择插入(标题不得为空)
     @RequestMapping(value = "", method = RequestMethod.POST)
+    @RecordLog(operateDesc = RecordUtil.ARTICLE_ADD, userType=RecordUtil.USERTYPE_ADMIN)
     public Map<String, Object> addArticle(Article article){
         Map<String, Object> map=new HashMap<String, Object>();
 
@@ -148,6 +149,7 @@ public class ArticleController {
 
     //根据id修改 id由前端隐式输入
     @RequestMapping(value = "", method = RequestMethod.PUT)
+    @RecordLog(operateDesc = RecordUtil.ARTICLE_UPDATE, userType=RecordUtil.USERTYPE_ADMIN)
     public Map<String, Object> editArticle(Article article){
         Map<String, Object> map=new HashMap<String, Object>();
 
@@ -163,6 +165,7 @@ public class ArticleController {
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @RecordLog(operateDesc = RecordUtil.ARTICLE_DELETE, userType=RecordUtil.USERTYPE_ADMIN)
     public Map<String, Object> deleteArticle(@PathVariable Integer id){
         Map<String, Object> map=new HashMap<String, Object>();
 

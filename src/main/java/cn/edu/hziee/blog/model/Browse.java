@@ -23,7 +23,7 @@ public class Browse implements Serializable {
     /**
      * 浏览时间
      */
-    private Date browsetime;
+    private String browsetime;
 
     private static final long serialVersionUID = 1L;
 
@@ -51,11 +51,11 @@ public class Browse implements Serializable {
         this.browsenum = browsenum;
     }
 
-    public Date getBrowsetime() {
+    public String getBrowsetime() {
         return browsetime;
     }
 
-    public void setBrowsetime(Date browsetime) {
+    public void setBrowsetime(String browsetime) {
         this.browsetime = browsetime;
     }
 

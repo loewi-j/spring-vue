@@ -1,7 +1,11 @@
 package cn.edu.hziee.blog.service;
 
+import cn.edu.hziee.blog.annotation.RecordLog;
 import cn.edu.hziee.blog.dao.ArticleMapper;
 import cn.edu.hziee.blog.model.Article;
+import cn.edu.hziee.blog.util.RecordUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,16 +19,19 @@ public class ArticleService {
     ArticleMapper articleMapper;
 
     //查询博客
+//    @RecordLog(operateDesc = RecordUtil.ARTICLE_SELECT, userType=RecordUtil.USERTYPE_USER)
     public Article selectArticleById(Integer id) {
         return articleMapper.selectByPrimaryKey(id);
     }
 
     //查询前一个
+//    @RecordLog(operateDesc = RecordUtil.ARTICLE_SELECT, userType=RecordUtil.USERTYPE_USER)
     public Article selectPrevArticle(Integer id) {
         return articleMapper.selectPrevArticle(id);
     }
 
     //查询后一个
+//    @RecordLog(operateDesc = RecordUtil.ARTICLE_SELECT, userType=RecordUtil.USERTYPE_USER)
     public Article selectNextArticle(Integer id) {
         return articleMapper.selectNextArticle(id);
     }
@@ -39,6 +46,36 @@ public class ArticleService {
     public Article selectArticleLastByCategories(String category) {
         return articleMapper.selectArticleLastByCategories(category);
     }
+
+    //模糊分页查询
+    public PageInfo selectLikeArticleListByPage(Map<String, Object> map) {
+        //分页显示
+        PageHelper.startPage((int)map.get("page"), (int)map.get("pageSize"));
+        List<Article> list = articleMapper.selectArticleListByPage(map);
+        PageInfo pageInfo = new PageInfo(list);
+        return pageInfo;
+    }
+
+    //关键字分类分页查询
+//    @RecordLog(operateDesc = RecordUtil.ARTICLE_SELECT, userType=RecordUtil.ARTICLE_FIND)
+    public PageInfo selectArticleListByKeyAndCategories(Map<String, Object> map) {
+        //分页显示
+        PageHelper.startPage((int)map.get("page"), (int)map.get("pageSize"));
+        List<Article> list = articleMapper.selectArticleListByKeyAndCategories(map);
+        PageInfo pageInfo = new PageInfo(list);
+        return pageInfo;
+    }
+
+    //根据状态和id查询
+    public List<?> selectArticleListByArticleStateAndId(Integer id) {
+        return articleMapper.selectArticleCountByArticleStateAndId(id);
+    }
+
+    //根据状态
+    public List<?> selectArticleListByArticleState() {
+        return articleMapper.selectArticleListByArticleState();
+    }
+
 
     //增加博客（选择 但标题不得为空 同时为上一个博客添加指向）
     public int insertArticleSelective(Article article) {
@@ -72,15 +109,6 @@ public class ArticleService {
         return 0;
     }
 
-    //分页查询
-    public List<Article> selectArticleListByPage(Map<String, Object> map) {
-        return null;
-    }
-
-    //模糊分页查询
-    public List<Article> selectLikeArticleListByPage(Map<String, Object> map) {
-        return null;
-    }
 
     //模糊分页分组查询
     public List<Article> selectGroupLikeArticleListByPage(Map<String, Object> map) {
@@ -101,8 +129,6 @@ public class ArticleService {
     public List<Article> selectArticleByTypeId(Integer id) {
         return null;
     }
-
-
 
     //根据时间查询
     public List<?> selectArticleListByDate(Map<String, Object> map) {

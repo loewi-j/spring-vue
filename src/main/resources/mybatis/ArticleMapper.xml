@@ -4,7 +4,7 @@
 
   <resultMap id="BaseResultMap" type="cn.edu.hziee.blog.model.Article">
     <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="author" jdbcType="VARCHAR" property="author" />
+    <result column="author" jdbcType="INTEGER" property="author" />
     <result column="articleTitle" jdbcType="VARCHAR" property="articletitle" />
     <result column="publishDate" jdbcType="TIMESTAMP" property="publishdate" />
     <result column="updateDate" jdbcType="TIMESTAMP" property="updatedate" />
@@ -52,12 +52,22 @@
 		group by articleState
 	</select>
 
+  <select id="selectArticleCountByArticleStateAndId" parameterType="java.lang.Integer" resultType="map">
+		select
+		articleState,
+		count(*) as count
+		from
+		article
+		where author = #{id, jdbcType=INTEGER}
+		group by articleState
+    </select>
+
   <select id="selectArticleListByArticleCategories" parameterType="String" resultMap="BaseResultMap">
 		select
         <include refid="Base_Column_List" />
 		from
 		article
-        where articleCategories = #{articleCategories,jdbcType=VARCHAR}
+        where articleCategories = #{articleCategories,jdbcType=VARCHAR} and articleState = 1
   </select>
 
   <select id="selectArticleLastByCategories" parameterType="String" resultMap="BaseResultMap">
@@ -68,8 +78,7 @@
     order by id DESC limit 1
   </select>
 
-  <select id="selectArticleListByPage" parameterType="Map"
-          resultMap="BaseResultMap">
+  <select id="selectArticleListByPage" parameterType="map" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from article
@@ -83,7 +92,9 @@
       <if test="articleContent!=null and articleContent!=''">
         and articleContent like CONCAT(CONCAT('%', #{articleContent}), '%')
       </if>
-
+      <if test="articleCategories!=null and articleCategories!=''">
+        and articleCategories like CONCAT(CONCAT('%', #{articleCategories}), '%')
+      </if>
       <if test="articleType!=null and articleType!=''">
         and articleType=#{articleType}
       </if>
@@ -95,7 +106,26 @@
       </if>
     </where>
     ORDER BY publishDate DESC
-     <if test="pageNow!=null and pageSize!=null"> limit #{pageNow},#{pageSize}</if>
+  </select>
+
+  <select id="selectArticleListByKeyAndCategories" parameterType="map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from article
+    where articleCategories = #{articleCategories,jdbcType=VARCHAR}
+        and id in (
+          select
+          id
+          from article
+          where author like CONCAT(CONCAT('%', #{key}), '%')
+          or articleTitle like CONCAT(CONCAT('%', #{key}), '%')
+          or articleContent like CONCAT(CONCAT('%', #{key}), '%')
+          or articleType like CONCAT(CONCAT('%', #{key}), '%')
+          or articleTags like CONCAT(CONCAT('%', #{key}), '%')
+          or articleAbstract like CONCAT(CONCAT('%', #{key}), '%')
+    )
+    ORDER BY publishDate DESC
+
   </select>
 
   <select id="selectArticleCount" parameterType="Map" resultType="Long">
